@@ -8,8 +8,8 @@ class Grass {
         this.status = HEALTHY;
         this.age = 0;
 
-        this.growSpeed = parseInt(random(2,3));
-        this.maxAge = parseInt(random(10,20));
+        this.growSpeed = parseInt(random(2, 4));
+        this.maxAge = parseInt(random(10, 20));
     }
 
     grow() {

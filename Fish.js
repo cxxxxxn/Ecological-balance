@@ -8,8 +8,8 @@ class Fish {
         this.status = HEALTHY;
         this.age = 0;
 
-        this.eatSpeed = parseInt(random(8, 12));
-        this.growSpeed = parseInt(random(16, 24));
+        this.eatSpeed = parseInt(random(2, 4));
+        this.growSpeed = parseInt(random(10, 20));
         this.maxAge = parseInt(random(18, 36));
     }
 
