@@ -5,11 +5,35 @@ class Fish {
         this.x = x;
         this.y = y;
 
-        this.growSpeed = random(0.005, 0.03);
-        this.status = HEALTHY;//LIVE:1, DEAD:0
+        this.status = HEALTHY;
+        this.age = 0;
+
+        this.eatSpeed = parseInt(random(5));
+        this.growSpeed = parseInt(random(5,10));
+        this.maxAge = parseInt(random(14,30));
     }
 
     grow() {
+        this.age++;
+        if(this.age > 3 * this.maxAge){//disappear
+            particles[this.x][this.y] = undefined;
+        }else if(this.age > this.maxAge){
+            this.status = DEAD;
+        }else{
+            if((this.age % this.eatSpeed) === 0){
+                this.eatGrass();
+            }
+            if((this.age % this.growSpeed) === 0){
+                this.multiply();
+            }
+        }
+    }
+
+    eatGrass(){
+        
+    }
+
+    multiply(){
 
     }
   

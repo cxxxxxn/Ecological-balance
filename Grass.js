@@ -5,18 +5,20 @@ class Grass {
         this.x = x;
         this.y = y;
 
-        this.growSpeed = random(0.005, 0.03);
         this.status = HEALTHY;
         this.age = 0;
+
+        this.growSpeed = parseInt(random(2,5));
+        this.maxAge = parseInt(random(10,20));
     }
 
     grow() {
         this.age++;
-        if(this.age > 18){//disappear
+        if(this.age > 3 * this.maxAge){//disappear
             particles[this.x][this.y] = undefined;
-        }else if(this.age > 15){
+        }else if(this.age > this.maxAge){
             this.status = DEAD;
-        }else if((this.age % 4) === 0){
+        }else if((this.age % this.growSpeed) === 0){
             this.multiply();
         }
     }
@@ -37,7 +39,7 @@ class Grass {
                     fill(102, 205, 0);  // Green
                     break;
             }
-                
+               
             ellipse(this.x * particleWidth + padding, this.y * particleHeight + padding, particleWidth - 2 * padding, particleHeight - 2 * padding);
         }
     }
