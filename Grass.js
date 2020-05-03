@@ -8,13 +8,13 @@ class Grass {
         this.status = HEALTHY;
         this.age = 0;
 
-        this.growSpeed = parseInt(random(2,5));
+        this.growSpeed = parseInt(random(2,3));
         this.maxAge = parseInt(random(10,20));
     }
 
     grow() {
         this.age++;
-        if(this.age > 3 * this.maxAge){//disappear
+        if(this.age > this.maxAge + 1){//disappear
             particles[this.x][this.y] = undefined;
         }else if(this.age > this.maxAge){
             this.status = DEAD;
