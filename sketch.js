@@ -177,20 +177,15 @@ function dragStart(e, index) {
     dragIndex = index
 }
 function dragging(e) {
-    // console.log(e)
     if(dragIndex === -1) return
     console.log(sliderDiv.elt.offsetLeft, e.pageX)
     if(dragIndex === 0) {
        if(e.pageX >= sliderDiv.elt.offsetLeft+splits_values[1]) {
-           console.log(e.pageX, sliderDiv.elt.offsetLeft+splits_values[1])
-           console.log('1')
-        splits_values[0] = splits_values[1]
+            splits_values[0] = splits_values[1]
        } else if (e.pageX <= sliderDiv.elt.offsetLeft) {
-            console.log('2')
             splits_values[0] = 0;
        }
        else {
-           console.log('3')
            splits_values[0] = (e.pageX-sliderDiv.elt.offsetLeft)
        }
            
@@ -228,9 +223,9 @@ function updateSliderUI() {
         }
     })
     initial_ratio.forEach((r, index)=>{
-        if(index === 0) span_grass.html(int((initial_ratio[0]/(initial_ratio[0]+initial_ratio[1]))*100)+'%');
-        else if(index === 1) span_fish.html(int((initial_ratio[1]/(initial_ratio[0]+initial_ratio[1]))*100)+'%');
-        else  span_empty.html(int(initial_ratio[2]*100)+'%');
+        if(index === 0) span_grass.html(round((initial_ratio[0]/(initial_ratio[0]+initial_ratio[1]))*100)+'%');
+        else if(index === 1) span_fish.html(round((initial_ratio[1]/(initial_ratio[0]+initial_ratio[1]))*100)+'%');
+        else  span_empty.html(round(initial_ratio[2]*100)+'%');
     })
 }
   
