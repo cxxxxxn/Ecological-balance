@@ -19,6 +19,7 @@ let fishRate = 0.1,
     grassRate = 0.1;
 
 let particles = [];
+let particles_history = [];
 
 let radioDraw;
 
@@ -85,6 +86,7 @@ function setup() {
 
     frameRate(2);
 
+    // parameters panel 
     para_container = createDiv();
     para_container.parent(container);
 
@@ -97,12 +99,13 @@ function setup() {
     radioDraw.elt.appendChild(span.elt);
     radioDraw.parent(para_container)
     
+    // ratio text div start
     let ratio_div = createDiv();
     ratio_div.parent(para_container);
     let ratio_text = createSpan("the Grass:Fish ratio is ");
-    span_grass = createSpan((initial_ratio[0]/(initial_ratio[0]+initial_ratio[1]))*100+'%')
+    span_grass = createSpan((initial_ratio[0]/(initial_ratio[0]+initial_ratio[1]))*100)
     let span_comma = createSpan(":");
-    span_fish = createSpan((initial_ratio[1]/(initial_ratio[0]+initial_ratio[1]))*100+'%');
+    span_fish = createSpan((initial_ratio[1]/(initial_ratio[0]+initial_ratio[1]))*100);
     let span_text_empty = createSpan(', the pond is ');
     span_empty = createSpan(initial_ratio[2]*100+'%');
     let span_text_final = createSpan(' empty.');
@@ -114,8 +117,13 @@ function setup() {
     span_text_empty.parent(ratio_div);
     span_empty.parent(ratio_div);
     span_text_final.parent(ratio_div);
+    // ratio text div end
 
+    // ratio slider
     sliderDiv = _slider();
+    
+    // linechart div
+    lineChartDiv = LineChart(para_container);
 
     let buttonPlay = createP('Pause');
     buttonPlay.class('button buttonPlay');
@@ -128,7 +136,7 @@ function _slider() {
         backgrounds:[
             {color:"rgb(65, 117, 5)",icon:"img/grassWhite.svg"},
             {color:"rgb(74, 144, 226)",icon:"img/fishWhite.svg"},
-            {color:"#000"}
+            {color:"#a8dee9"}
         ],
         values:[0.3, 0.3, 0.4],
     }
@@ -161,7 +169,6 @@ function _slider() {
         split.class('slider_split');
         splits.push(split);
         split.style("left", (400*left_pos)+"px");
-        console.log(_div.elt.offsetLeft)
         splits_values.push(400*left_pos)
         left_pos+=initial_ratio[i+1];
         
@@ -178,7 +185,6 @@ function dragStart(e, index) {
 }
 function dragging(e) {
     if(dragIndex === -1) return
-    console.log(sliderDiv.elt.offsetLeft, e.pageX)
     if(dragIndex === 0) {
        if(e.pageX >= sliderDiv.elt.offsetLeft+splits_values[1]) {
             splits_values[0] = splits_values[1]
@@ -197,7 +203,6 @@ function dragging(e) {
         else 
              splits_values[1] = (e.pageX-sliderDiv.elt.offsetLeft)
      }
-     console.log(splits_values)
     updateSliderUI();
 }
 function dragEnd(e) {
@@ -212,9 +217,9 @@ function updateSliderUI() {
     })
     parts.forEach((part, index)=>{
         if(index === 2) {
-            part.style('left', _xleft+'px')
-            part.style('width',  400 - _xleft+'px');
-            initial_ratio[index] = (400 - _xleft)/400
+            part.style('left', _xleft+10+'px')
+            part.style('width',  400 - _xleft-10+'px');
+            initial_ratio[index] = (400 - _xleft-10)/400
         } else {
             part.style('left', _xleft+'px')
             part.style('width', (splits_values[index]-_xleft)+'px');
@@ -223,8 +228,8 @@ function updateSliderUI() {
         }
     })
     initial_ratio.forEach((r, index)=>{
-        if(index === 0) span_grass.html(round((initial_ratio[0]/(initial_ratio[0]+initial_ratio[1]))*100)+'%');
-        else if(index === 1) span_fish.html(round((initial_ratio[1]/(initial_ratio[0]+initial_ratio[1]))*100)+'%');
+        if(index === 0) span_grass.html(round((initial_ratio[0]/(initial_ratio[0]+initial_ratio[1]))*100));
+        else if(index === 1) span_fish.html(round((initial_ratio[1]/(initial_ratio[0]+initial_ratio[1]))*100));
         else  span_empty.html(round(initial_ratio[2]*100)+'%');
     })
 }
@@ -284,9 +289,11 @@ function playPause() {
     if (isLoop){
         buttonPlay.innerHTML = "Pause";
         loop();
+        lineChartDiv.loop();
     }else{
         buttonPlay.innerHTML = "Play";
         noLoop();
+        lineChartDiv.noLoop();
     }
 }
 
