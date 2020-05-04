@@ -147,3 +147,25 @@ canvas {
     margin: 8px;
     margin-left: 15px;
 }
+
+input[type=range] {
+    width: 180px;
+}
+
+.speed_value{
+    min-width: 50px;
+    border-right: 1px solid #aaa;
+    padding-right: 4px;
+    margin-right: 4px;
+}
+
+span.speed_value {
+        margin-left: 15px; 
+        font-size: 20px; 
+    display:-moz-inline-box;
+
+    display:inline-block;
+
+    width:200px;
+    
+}

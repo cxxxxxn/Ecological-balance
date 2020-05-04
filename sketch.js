@@ -21,7 +21,7 @@ let particles_history = [];
 let radioDraw;//control free fish or electric fish
 
 // initial ratio of fish:grass:empty
-let initial_ratio = [0.2, 0.2, 0.6];
+let initial_ratio = [0.1, 0.1, 0.8];
 let parts = [];
 let splits = [];
 let splits_values = [];
@@ -30,6 +30,9 @@ let dragIndex = -1;
 let sliderDiv= null;
 let para_container;
 let span_grass, span_fish, span_empty;
+
+// slider of grow
+let speedFrame_slider, speedFrame_text, speedFrame_value=2
 
 let imgGrass = {},
     imgFish = {};
@@ -98,7 +101,18 @@ function setup() {
 
     // ratio slider
     sliderDiv = _slider();
-    
+
+    // frameRate
+    let speed_div = createDiv();
+    speed_div.parent(para_container);
+    // growSpeed - grass
+    speedFrame_text = createSpan('Animation Speed: '+speedFrame_value);
+    speedFrame_text.parent(speed_div);
+    speedFrame_text.class('speed_value');
+    speedFrame_slider = createSlider(2, 20, 2, 1)
+    speedFrame_slider.parent(speed_div);
+    speedFrame_slider.input(updateFrameRate);
+
 
     let buttonPlay = createP('PLAY');
     buttonPlay.class('button buttonPlay');
@@ -132,9 +146,8 @@ function initParticles(){
         particles[i] = new Array(columnNum);
     }
 
-    let fishNum = parseInt(initial_ratio[0] * allNum),
-        grassNum = parseInt(initial_ratio[1] * allNum);
-    console.log(fishNum, grassNum)
+    let fishNum = parseInt(initial_ratio[1] * allNum),
+        grassNum = parseInt(initial_ratio[0] * allNum);
     for (let i = 0; i < fishNum; i++){//init fish
         let x = parseInt(random(rowNum)),
             y = parseInt(random(columnNum));
@@ -272,6 +285,7 @@ function updateSliderUI() {
 }
   
 function draw() {
+    
     background(240, 255, 255);
     select('canvas').class(radioDraw.value() === '1' ?'freeFish':'electricFish')
     if(!isLoop){
@@ -428,3 +442,11 @@ function findGrass(x,y){
     }
     return;
 }
+
+function updateFrameRate() {
+    speedFrame_value=speedFrame_slider.value(),
+    speedFrame_text.html('Animation Speed: '+speedFrame_value);
+    frameRate(speedFrame_value);
+    lineChartDiv.frameRate(speedFrame_value);
+}
+
