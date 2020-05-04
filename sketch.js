@@ -5,7 +5,8 @@ const particleWidth = 37.5,
     padding = 5;
 
 const rowNum = parseInt(canvasWidth / particleWidth),
-    columnNum = parseInt(canvasHeight / particleHeight);
+    columnNum = parseInt(canvasHeight / particleHeight),
+    allNum =  rowNum * columnNum;
 
 const HEALTHY = 0,
     HUNGRY = 1,
@@ -14,17 +15,13 @@ const HEALTHY = 0,
 
 let isLoop = false;
 // Environment
-// 
-let fishRate = 0.1,
-    grassRate = 0.1;
-
 let particles = [];
 let particles_history = [];
 
-let radioDraw;
+let radioDraw;//control free fish or electric fish
 
 // initial ratio of fish:grass:empty
-let initial_ratio = [0.3, 0.3, 0.4];
+let initial_ratio = [0.2, 0.2, 0.6];
 let parts = [];
 let splits = [];
 let splits_values = [];
@@ -49,40 +46,13 @@ function preload() {
 function setup() {
     let container = createDiv();
     container.class('container');
+
     let canvas_container = createDiv();
-    canvas_container.parent(container)
+    canvas_container.parent(container);
     let canv = createCanvas(canvasWidth, canvasHeight);
-    canv.parent(canvas_container)
-    const allNum =  rowNum * columnNum;
-    particles = new Array(rowNum);
-    for(let i = 0; i < columnNum; i++){
-        particles[i] = new Array(columnNum);
-    }
+    canv.parent(canvas_container);
 
-    let fishNum = parseInt(fishRate * allNum),
-        grassNum = parseInt(grassRate * allNum);
-
-    for (let i = 0; i < fishNum; i++){
-        let x = parseInt(random(rowNum)),
-            y = parseInt(random(columnNum));
-        
-        while(particles[x][y]){
-            x = parseInt(random(rowNum)),
-            y = parseInt(random(columnNum));
-        }
-        particles[x][y] = new Fish(x, y);
-    }
-
-    for (let i = 0; i < grassNum; i++){
-        let x = parseInt(random(rowNum)),
-            y = parseInt(random(columnNum));
-        
-        while(particles[x][y]){
-            x = parseInt(random(rowNum)),
-            y = parseInt(random(columnNum));
-        }
-        particles[x][y] = new Grass(x, y);
-    }
+    initParticles();
 
     frameRate(2);
 
@@ -125,10 +95,45 @@ function setup() {
     // linechart div
     lineChartDiv = LineChart(para_container);
 
-    let buttonPlay = createP('Pause');
+    let buttonPlay = createP('Play');
     buttonPlay.class('button buttonPlay');
     buttonPlay.mousePressed(playPause);
     buttonPlay.parent(para_container);
+
+    let buttonNewBoard = createP('NEW BOARD');
+    buttonNewBoard.class('button');
+    buttonNewBoard.mousePressed(updateBoard);
+    buttonNewBoard.parent(para_container);
+
+    noLoop();
+}
+
+function initParticles(){
+    particles = new Array(rowNum);
+    for(let i = 0; i < columnNum; i++){
+        particles[i] = new Array(columnNum);
+    }
+
+    let fishNum = parseInt(initial_ratio[0] * allNum),
+        grassNum = parseInt(initial_ratio[1] * allNum);
+    for (let i = 0; i < fishNum; i++){//init fish
+        let x = parseInt(random(rowNum)),
+            y = parseInt(random(columnNum));
+        while(particles[x][y]){
+            x = parseInt(random(rowNum)),
+            y = parseInt(random(columnNum));
+        }
+        particles[x][y] = new Fish(x, y);
+    }
+    for (let i = 0; i < grassNum; i++){//init grass
+        let x = parseInt(random(rowNum)),
+            y = parseInt(random(columnNum));
+        while(particles[x][y]){
+            x = parseInt(random(rowNum)),
+            y = parseInt(random(columnNum));
+        }
+        particles[x][y] = new Grass(x, y);
+    }
 }
 
 function _slider() {
@@ -173,6 +178,7 @@ function _slider() {
         left_pos+=initial_ratio[i+1];
         
         split.elt.addEventListener("mousedown",(e)=>dragStart(e, i),true);
+        split.elt.addEventListener("mouseup",(e)=>updateBoard(),true);
 
     }
     document.body.addEventListener("mousemove",(e)=>dragging(e),true);
@@ -206,7 +212,19 @@ function dragging(e) {
     updateSliderUI();
 }
 function dragEnd(e) {
-    dragIndex = -1
+    dragIndex = -1;
+}
+
+function updateBoard(){
+    //new
+    initParticles();
+    particles_history = [];
+
+    const buttonPlay = select('.buttonPlay').elt;
+    loop();
+    lineChartDiv.loop();
+    isLoop = false;
+    buttonPlay.innerHTML = "Play";
 }
 
 function updateSliderUI() {
@@ -237,7 +255,9 @@ function updateSliderUI() {
 function draw() {
     background(240, 255, 255);
     select('canvas').class(radioDraw.value() === '1' ?'freeFish':'electricFish')
-
+    if(!isLoop){
+        noLoop();
+    }
     let currentParticles = [];
     particles.forEach(row => {
         row.forEach(particle => {

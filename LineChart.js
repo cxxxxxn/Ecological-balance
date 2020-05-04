@@ -15,7 +15,9 @@ function LineChart(parent) {
         };
         
         sketch.draw = function() {
-            
+            if(!isLoop){
+                sketch.noLoop();
+            }
             sketch.background(255);
             // x y axis
             sketch.push()
