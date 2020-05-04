@@ -1,5 +1,5 @@
-const particleWidth = 30,
-    particleHeight = 30,
+const particleWidth = 37.5,
+    particleHeight = 37.5,
     canvasWidth = 900,
     canvasHeight = 900,
     padding = 5;
@@ -9,15 +9,14 @@ const rowNum = parseInt(canvasWidth / particleWidth),
 
 const HEALTHY = 0,
     HUNGRY = 1,
-    DEAD = 4;
+    DEAD = 2,
+    ELECTRIC = 3;
 
-let isLoop = true;
+let isLoop = false;
 // Environment
 // 
 let fishRate = 0.1,
     grassRate = 0.1;
-
-let oxygenRate = 0.5;//range:[0,1]
 
 let particles = [];
 
@@ -33,6 +32,19 @@ let dragIndex = -1;
 let sliderDiv= null;
 let para_container;
 let span_grass, span_fish, span_empty;
+
+let imgGrass = {},
+    imgFish = {};
+function preload() {
+    imgGrass[DEAD] = loadImage('./img/grassDead.png');
+    imgGrass[HEALTHY] = loadImage('./img/grassHealthy.png');
+
+    imgFish[DEAD] = loadImage('./img/fishDead.png');
+    imgFish[HEALTHY] = loadImage('./img/fishHealthy.png');
+    imgFish[HUNGRY] = loadImage('./img/fishHungry.png');
+    imgFish[ELECTRIC] = loadImage('./img/electric.svg');
+}
+
 function setup() {
     let container = createDiv();
     container.class('container');
@@ -72,23 +84,9 @@ function setup() {
     }
 
     frameRate(2);
-    ellipseMode(CORNER);
 
     para_container = createDiv();
-    para_container.parent(container)
-    let buttonPlay = createP('Pause');
-    buttonPlay.class('button buttonPlay');
-    buttonPlay.mousePressed(playPause);
-    buttonPlay.parent(para_container)
-    // let buttonFree = createP('Free fish 🐟');
-    // buttonFree.class('button');
-    // buttonFree.mousePressed(freeFish);
-
-    // let buttonElectric = createP('Electric fish ⚡️');
-    // buttonElectric.class('button');
-    // buttonElectric.mousePressed(electricFish);
-    // createSpan('Free fish🐟');
-    // createSpan('Electric fish ⚡️');
+    para_container.parent(container);
 
     radioDraw = createRadio();
     radioDraw.class('radio radioDraw');
@@ -118,17 +116,20 @@ function setup() {
     span_text_final.parent(ratio_div);
 
     sliderDiv = _slider();
-    
 
+    let buttonPlay = createP('Pause');
+    buttonPlay.class('button buttonPlay');
+    buttonPlay.mousePressed(playPause);
+    buttonPlay.parent(para_container);
 }
 
 function _slider() {
     let config = {
         backgrounds:[
-                    {color:"#FFDD56",icon:"img/grass.png"},
-                    {color:"#567DFF",icon:"img/fish.png"},
-                    {color:"#000"}
-                ],
+            {color:"rgb(65, 117, 5)",icon:"img/grassWhite.svg"},
+            {color:"rgb(74, 144, 226)",icon:"img/fishWhite.svg"},
+            {color:"#000"}
+        ],
         values:[0.3, 0.3, 0.4],
     }
     let _div = createDiv('');
@@ -170,7 +171,6 @@ function _slider() {
     document.body.addEventListener("mousemove",(e)=>dragging(e),true);
     document.body.addEventListener("mouseup",(e)=>dragEnd(e),true);
     return _div;
-
 }
 
 function dragStart(e, index) {
@@ -230,32 +230,26 @@ function updateSliderUI() {
 }
   
 function draw() {
-    background(224, 255, 255);
-    text(isLoop, 60, 20);
+    background(240, 255, 255);
+    select('canvas').class(radioDraw.value() === '1' ?'freeFish':'electricFish')
 
-    push();
-    stroke(220);
-    for (let x = 0; x <= width; x += particleWidth){
-        line(x, 0, x , height);
-    }
-    for (let y = 0; y <= height; y += particleHeight) {
-        line(0, y, width, y);
-    }
-    pop();
-
+    let currentParticles = [];
     particles.forEach(row => {
         row.forEach(particle => {
             if(particle){
-                particle.grow();
-                particle.plot();
+                currentParticles.push(particle);
             }
         });
     });
+    currentParticles.forEach(particle => {
+        particle.grow();
+        particle.plot();
+    });
 }
 
-function killFish(x,y){
+function electricFish(x,y){
     if(particles[x][y] && particles[x][y].type === "fish")
-        particles[x][y].status = DEAD;
+        particles[x][y].status = ELECTRIC;
 }
 
 function mousePressed(e) {
@@ -270,10 +264,10 @@ function mousePressed(e) {
             case '2': // Electric fish
                 for(let i = 0; i < 4; i++){
                     for (let j = 0; j < 4; j++){
-                        if(x-i >= 0 && y-j >= 0) killFish(x-i, y-j);
-                        if(x-i >= 0 && y+j <= columnNum - 1) killFish(x-i, y+j);
-                        if(x+i <= rowNum - 1 && y-j >= 0) killFish(x+i, y-j);
-                        if(x+i <= rowNum - 1  && y+j <= columnNum - 1) killFish(x+i, y+j);
+                        if(x-i >= 0 && y-j >= 0) electricFish(x-i, y-j);
+                        if(x-i >= 0 && y+j <= columnNum - 1) electricFish(x-i, y+j);
+                        if(x+i <= rowNum - 1 && y-j >= 0) electricFish(x+i, y-j);
+                        if(x+i <= rowNum - 1 && y+j <= columnNum - 1) electricFish(x+i, y+j);
                     }
                 }
                 break;
@@ -302,7 +296,7 @@ function keyPressed() {
     }
 }
 
-function getNullSpace(x,y){
+function getNullNeighborSpace(x,y){
     let nullSpace = [];
 
     function detectedNull(x1, y1){
@@ -343,6 +337,29 @@ function getNullSpace(x,y){
     return nullSpace[parseInt(random(nullSpace.length))];
 }
 
+function getNullSpace(x,y){
+    function isNull(x1, y1){
+        if(x1 >= 0 && y1 >= 0 && x1 < rowNum && y1 < columnNum)
+            return !particles[x1][y1];
+        return false;
+    }
+
+    let count = 0;
+    while(count < 20){
+        count ++;
+        let dis = parseInt(count/6);
+        let x1 = parseInt(random(dis*2+1)) - dis + x,
+            y1 = parseInt(random(dis*2+1)) - dis + y;
+        if(isNull(x1, y1)){
+            return {
+                "x": x1,
+                "y": y1
+            }
+        }
+    }
+    return;
+}
+
 function findGrass(x,y){
     function isGrass(x1, y1){
         if(x1 >= 0 && y1 >= 0 && x1 < rowNum && y1 < columnNum)
@@ -351,7 +368,7 @@ function findGrass(x,y){
     }
 
     let count = 0;
-    while(count < 12){
+    while(count < 18){
         count ++;
         let dis = parseInt(count/4);
         let x1 = parseInt(random(dis*2+1)) - dis + x,

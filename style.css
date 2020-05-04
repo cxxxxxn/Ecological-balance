@@ -8,13 +8,21 @@ canvas {
     display: block;
 }
 
+.freeFish{
+    cursor: url('./img/freefish.svg'), auto
+}
+
+.electricFish{
+    cursor: url('./img/electric.svg'), auto
+}
+
 .button {
     display: inline-block;
     padding-left: 6px;
     padding-right: 6px;
     padding-top: 2px;
     padding-bottom: 2px;
-    margin-top: 0px;
+    margin-top: 10px;
     margin-bottom: 8px;
     margin-right: 5px;
     border-radius: 4px;
@@ -22,11 +30,11 @@ canvas {
     background: #667788;
     color: white;
     text-align: center;
-    font-size: 18px;
+    font-size: 24px;
 }
 
 .buttonPlay{
-    width: 60px;
+    width: 80px;
 }
 
 .radio{
