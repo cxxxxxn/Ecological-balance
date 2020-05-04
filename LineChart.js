@@ -3,7 +3,7 @@ function LineChart(parent) {
     let _height = 300;
     let _width = 400;
     let offset = 30;
-    let colors = ['blue', 'green']
+    let colors = ["#417505", "#4a90e2"]
     let s = function(sketch) {
 
         sketch.setup = function() {
@@ -65,7 +65,6 @@ function LineChart(parent) {
                 for (let j=0; j<row.length; j++) {
                     let cell = row[j]
                     num_all +=1;
-                    // console.log(cell, !cell)
                     if(!cell)  {
                         continue
                     }

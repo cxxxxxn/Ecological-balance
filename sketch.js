@@ -136,7 +136,7 @@ function _slider() {
         backgrounds:[
             {color:"rgb(65, 117, 5)",icon:"img/grassWhite.svg"},
             {color:"rgb(74, 144, 226)",icon:"img/fishWhite.svg"},
-            {color:"#000"}
+            {color:"#a8dee9"}
         ],
         values:[0.3, 0.3, 0.4],
     }
@@ -185,7 +185,6 @@ function dragStart(e, index) {
 }
 function dragging(e) {
     if(dragIndex === -1) return
-    console.log(sliderDiv.elt.offsetLeft, e.pageX)
     if(dragIndex === 0) {
        if(e.pageX >= sliderDiv.elt.offsetLeft+splits_values[1]) {
             splits_values[0] = splits_values[1]
@@ -204,7 +203,6 @@ function dragging(e) {
         else 
              splits_values[1] = (e.pageX-sliderDiv.elt.offsetLeft)
      }
-     console.log(splits_values)
     updateSliderUI();
 }
 function dragEnd(e) {
