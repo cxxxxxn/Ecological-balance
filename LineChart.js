@@ -1,7 +1,7 @@
 function LineChart(parent) {
     let frameIndex = 0
     let _height = 300;
-    let _width = 400;
+    let _width = 350;
     let offset = 30;
     let colors = ["#4a90e2", "#417505"]
     let s = function(sketch) {
@@ -30,13 +30,13 @@ function LineChart(parent) {
             // x y label
             sketch.push();
             sketch.fill(205);
-            sketch.textSize(16);
+            sketch.textSize(14);
             sketch.text('TIME', _width-40, _height-offset/2);
             sketch.pop();
 
             sketch.push();
             sketch.fill(205);
-            sketch.textSize(16);
+            sketch.textSize(14);
             sketch.translate(45, 30);
             sketch.rotate(PI/2);
             sketch.text('NUMBER', 5, 30);
@@ -46,23 +46,21 @@ function LineChart(parent) {
             sketch.push();
             sketch.stroke(colors[0]);
             sketch.strokeWeight(2)
-            sketch.line(170, offset/2, 200, offset/2);
+            sketch.line(130, offset/2, 160, offset/2);
             sketch.strokeWeight(1);
             sketch.fill(colors[0]);
             sketch.textAlign(LEFT, CENTER);
-            sketch.textSize(14);
-            sketch.text('Fish', 130, offset/2)
+            sketch.text('Fish', 100, offset/2)
             sketch.pop();
 
             sketch.push();
             sketch.stroke(colors[1]);
             sketch.strokeWeight(2)
-            sketch.line(303, offset/2, 333, offset/2);
+            sketch.line(240, offset/2, 270, offset/2);
             sketch.strokeWeight(1)
             sketch.fill(colors[1]);
             sketch.textAlign(LEFT, CENTER);
-            sketch.textSize(14);
-            sketch.text('Seaweed', 230, offset/2)
+            sketch.text('Seaweed', 180, offset/2)
             sketch.pop();
             
             let num_fish=0, num_grass=0, num_all=0;

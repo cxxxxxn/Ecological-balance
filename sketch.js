@@ -1,8 +1,8 @@
-const particleWidth = 37.5,
-    particleHeight = 37.5,
-    canvasWidth = 900,
-    canvasHeight = 900,
-    padding = 5;
+const particleWidth = 24,
+    particleHeight = 24,
+    canvasWidth = 600,
+    canvasHeight = 600,
+    padding = 3;
 
 const rowNum = parseInt(canvasWidth / particleWidth),
     columnNum = parseInt(canvasHeight / particleHeight),
@@ -32,7 +32,7 @@ let para_container;
 let span_grass, span_fish, span_empty;
 
 // slider of grow
-let speedFrame_slider, speedFrame_text, speedFrame_value=2
+let speedFrame_slider, speedFrame_valuetext, speedFrame_value=2
 
 let imgGrass = {},
     imgFish = {};
@@ -68,7 +68,7 @@ function setup() {
 
     initParticles();
 
-    frameRate(10);
+    frameRate(2);
 
     // parameters panel 
     para_container = createDiv();
@@ -84,10 +84,14 @@ function setup() {
     ratio_div.parent(para_container);
     let ratio_text = createSpan("the seaweed:fish ratio is ");
     span_grass = createSpan((initial_ratio[0]/(initial_ratio[0]+initial_ratio[1]))*100)
+    span_grass.class('highlight');
     let span_comma = createSpan(":");
+    span_comma.class('highlight');
     span_fish = createSpan((initial_ratio[1]/(initial_ratio[0]+initial_ratio[1]))*100);
-    let span_text_empty = createSpan(', the pond is ');
+    span_fish.class('highlight');
+    let span_text_empty = createSpan(', pond is ');
     span_empty = createSpan(initial_ratio[2]*100+'%');
+    span_empty.class('highlight');
     let span_text_final = createSpan(' empty.');
 
     ratio_text.parent(ratio_div);
@@ -106,10 +110,15 @@ function setup() {
     let speed_div = createDiv();
     speed_div.parent(para_container);
     // growSpeed - grass
-    speedFrame_text = createSpan('Animation Speed: '+speedFrame_value);
+    speedFrame_text = createSpan('Animation Speed: ');
+    speedFrame_valuetext = createSpan(speedFrame_value);
     speedFrame_text.parent(speed_div);
+    speedFrame_valuetext.parent(speed_div);
     speedFrame_text.class('speed_value');
-    speedFrame_slider = createSlider(2, 20, 2, 1)
+    speedFrame_valuetext.class('highlight');
+
+    speedFrame_slider = createSlider(2, 20, 2, 1);
+    speedFrame_slider.class('speed_slider')
     speedFrame_slider.parent(speed_div);
     speedFrame_slider.input(updateFrameRate);
 
@@ -133,8 +142,6 @@ function setup() {
     radioDraw.option('Free fish🐟', 1);
     radioDraw.option('Electric fish⚡️', 2);
     radioDraw.value('1');
-    // let span = createSpan('(Click the canvas ! )');
-    // radioDraw.elt.appendChild(span.elt);
     radioDraw.parent(para_container);
 
     noLoop();
@@ -192,10 +199,10 @@ function _slider() {
     parts.forEach((part, i)=>{
         part.parent(_div);
         part.class('slider_part');
-        part.style('width', initial_ratio[i]*450 +'px');
+        part.style('width', initial_ratio[i]*320 +'px');
         part.style('background-color', config.backgrounds[i].color)
         part.style("background-image", "url("+config.backgrounds[i].icon+")")
-        part.style("left", (450*left_value)+"px");
+        part.style("left", (320*left_value)+"px");
         left_value += initial_ratio[i]
     })
 
@@ -205,8 +212,8 @@ function _slider() {
         split.parent(_div);
         split.class('slider_split');
         splits.push(split);
-        split.style("left", (450*left_pos)+"px");
-        splits_values.push(450*left_pos)
+        split.style("left", (320*left_pos)+"px");
+        splits_values.push(320*left_pos)
         left_pos+=initial_ratio[i+1];
         
         split.elt.addEventListener("mousedown",(e)=>dragStart(e, i),true);
@@ -234,8 +241,8 @@ function dragging(e) {
        }
            
     } else if(dragIndex === 1) {
-        if(e.pageX >= sliderDiv.elt.offsetLeft+450-20) {
-             splits_values[1] = 450-10;
+        if(e.pageX >= sliderDiv.elt.offsetLeft+320-20) {
+             splits_values[1] = 320-10;
         } else if (e.pageX  <= sliderDiv.elt.offsetLeft+splits_values[0])
              splits_values[1] = splits_values[0]
         else 
@@ -268,12 +275,12 @@ function updateSliderUI() {
     parts.forEach((part, index)=>{
         if(index === 2) {
             part.style('left', _xleft+10+'px')
-            part.style('width',  450 - _xleft-10+'px');
-            initial_ratio[index] = (450 - _xleft-10)/450
+            part.style('width',  320 - _xleft-10+'px');
+            initial_ratio[index] = (320 - _xleft-10)/320
         } else {
             part.style('left', _xleft+'px')
             part.style('width', (splits_values[index]-_xleft)+'px');
-            initial_ratio[index] = (splits_values[index]-_xleft)/450
+            initial_ratio[index] = (splits_values[index]-_xleft)/320
             _xleft = splits_values[index];
         }
     })
@@ -445,7 +452,7 @@ function findGrass(x,y){
 
 function updateFrameRate() {
     speedFrame_value=speedFrame_slider.value(),
-    speedFrame_text.html('Animation Speed: '+speedFrame_value);
+    speedFrame_valuetext.html(speedFrame_value);
     frameRate(speedFrame_value);
     lineChartDiv.frameRate(speedFrame_value);
 }
