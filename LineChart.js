@@ -1,8 +1,8 @@
 function LineChart(parent) {
     let frameIndex = 0
-    let _height = 300;
-    let _width = 400;
-    let offset = 30;
+    let _height = 400;
+    let _width = 450;
+    let offset = 35;
     let colors = ["#417505", "#4a90e2"]
     let s = function(sketch) {
 
@@ -18,26 +18,27 @@ function LineChart(parent) {
             if(!isLoop){
                 sketch.noLoop();
             }
-            sketch.background(255);
+            sketch.background(240, 255, 255);
             // x y axis
             sketch.push()
             sketch.stroke(205);
-            sketch.strokeWeight(2)
+            sketch.strokeWeight(3)
             sketch.line(offset, offset, offset, _height-offset);
             sketch.line(offset, _height-offset, _width, _height-offset);
             sketch.pop()
             // x y label
             sketch.push();
             sketch.fill(205);
-            sketch.text('TIME', _width-30, _height-offset/2);
+            sketch.textSize(16);
+            sketch.text('TIME', _width-40, _height-offset/2);
             sketch.pop();
 
             sketch.push();
             sketch.fill(205);
-            
+            sketch.textSize(16);
             sketch.translate(45, 30);
             sketch.rotate(PI/2);
-            sketch.text('NUMBER', 0, 30);
+            sketch.text('NUMBER', 5, 30);
             sketch.pop();
 
             // line label
@@ -48,17 +49,19 @@ function LineChart(parent) {
             sketch.strokeWeight(1);
             sketch.fill(colors[0]);
             sketch.textAlign(LEFT, CENTER);
+            sketch.textSize(14);
             sketch.text('Fish', 130, offset/2)
             sketch.pop();
 
             sketch.push();
             sketch.stroke(colors[1]);
             sketch.strokeWeight(2)
-            sketch.line(270, offset/2, 300, offset/2);
+            sketch.line(303, offset/2, 333, offset/2);
             sketch.strokeWeight(1)
             sketch.fill(colors[1]);
             sketch.textAlign(LEFT, CENTER);
-            sketch.text('Grass', 230, offset/2)
+            sketch.textSize(14);
+            sketch.text('Seaweed', 230, offset/2)
             sketch.pop();
             
             let num_fish=0, num_grass=0, num_all=0;

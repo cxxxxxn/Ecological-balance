@@ -9,8 +9,8 @@ class Fish {
         this.age = 0;
 
         this.eatSpeed = parseInt(random(3, 5));
-        this.growSpeed = parseInt(random(10, 20));
-        this.maxAge = parseInt(random(20, 60));
+        this.growSpeed = parseInt(random(12, 16));
+        this.maxAge = parseInt(random(20, 40));
     }
 
     grow() {
@@ -22,7 +22,7 @@ class Fish {
         }else if(this.age > 0){
             if((this.age % this.eatSpeed) === 0 || this.status === HUNGRY){
                 this.eatGrass();
-            }else if((this.age % this.growSpeed) === 0 && this.status === HEALTHY){
+            }else if((this.age < this.maxAge / 2) &&(this.age % this.growSpeed) === 0 && this.status === HEALTHY){
                 this.multiply();
             }else if(this.age > 1){
                 this.swim();

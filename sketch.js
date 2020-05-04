@@ -44,9 +44,20 @@ function preload() {
 }
 
 function setup() {
+    let head = createDiv();
+    head.class('head');
+    let title = createDiv('SEAWEED-FISH ECOSYSTEM');
+    title.class('title');
+    title.parent(head);
+    let title1 = createDiv('ECOLOGICAL BALANCE SIMULATOR');
+    title1.class('title1');
+    title1.parent(head);
+    let author = createDiv('by Nan Chen(1931950) + Fuling Sun(1931960)');
+    author.class('author');
+    author.parent(head);
+
     let container = createDiv();
     container.class('container');
-
     let canvas_container = createDiv();
     canvas_container.parent(container);
     let canv = createCanvas(canvasWidth, canvasHeight);
@@ -54,25 +65,21 @@ function setup() {
 
     initParticles();
 
-    frameRate(2);
+    frameRate(10);
 
     // parameters panel 
     para_container = createDiv();
+    para_container.class('paraContainer');
     para_container.parent(container);
 
-    radioDraw = createRadio();
-    radioDraw.class('radio radioDraw');
-    radioDraw.option('Free fish 🐟', 1);
-    radioDraw.option('Electric fish ⚡️', 2);
-    radioDraw.value('1');
-    let span = createSpan('(Click the canvas !)');
-    radioDraw.elt.appendChild(span.elt);
-    radioDraw.parent(para_container)
+    // linechart div
+    lineChartDiv = LineChart(para_container);
     
     // ratio text div start
     let ratio_div = createDiv();
+    ratio_div.class('ratioDiv');
     ratio_div.parent(para_container);
-    let ratio_text = createSpan("the Grass:Fish ratio is ");
+    let ratio_text = createSpan("the seaweed:fish ratio is ");
     span_grass = createSpan((initial_ratio[0]/(initial_ratio[0]+initial_ratio[1]))*100)
     let span_comma = createSpan(":");
     span_fish = createSpan((initial_ratio[1]/(initial_ratio[0]+initial_ratio[1]))*100);
@@ -92,10 +99,8 @@ function setup() {
     // ratio slider
     sliderDiv = _slider();
     
-    // linechart div
-    lineChartDiv = LineChart(para_container);
 
-    let buttonPlay = createP('Play');
+    let buttonPlay = createP('PLAY');
     buttonPlay.class('button buttonPlay');
     buttonPlay.mousePressed(playPause);
     buttonPlay.parent(para_container);
@@ -104,6 +109,19 @@ function setup() {
     buttonNewBoard.class('button');
     buttonNewBoard.mousePressed(updateBoard);
     buttonNewBoard.parent(para_container);
+
+
+    let canvasClick = createDiv('Let\'s click the canvas:');
+    canvasClick.class('canvasClick');
+    canvasClick.parent(para_container);
+    radioDraw = createRadio();
+    radioDraw.class('radio radioDraw');
+    radioDraw.option('Free fish🐟', 1);
+    radioDraw.option('Electric fish⚡️', 2);
+    radioDraw.value('1');
+    // let span = createSpan('(Click the canvas ! )');
+    // radioDraw.elt.appendChild(span.elt);
+    radioDraw.parent(para_container);
 
     noLoop();
 }
@@ -116,6 +134,7 @@ function initParticles(){
 
     let fishNum = parseInt(initial_ratio[0] * allNum),
         grassNum = parseInt(initial_ratio[1] * allNum);
+    console.log(fishNum, grassNum)
     for (let i = 0; i < fishNum; i++){//init fish
         let x = parseInt(random(rowNum)),
             y = parseInt(random(columnNum));
@@ -141,7 +160,7 @@ function _slider() {
         backgrounds:[
             {color:"rgb(65, 117, 5)",icon:"img/grassWhite.svg"},
             {color:"rgb(74, 144, 226)",icon:"img/fishWhite.svg"},
-            {color:"#a8dee9"}
+            {color:"#a8dee9"}//697787
         ],
         values:[0.3, 0.3, 0.4],
     }
@@ -160,10 +179,10 @@ function _slider() {
     parts.forEach((part, i)=>{
         part.parent(_div);
         part.class('slider_part');
-        part.style('width', initial_ratio[i]*400 +'px');
+        part.style('width', initial_ratio[i]*450 +'px');
         part.style('background-color', config.backgrounds[i].color)
         part.style("background-image", "url("+config.backgrounds[i].icon+")")
-        part.style("left", (400*left_value)+"px");
+        part.style("left", (450*left_value)+"px");
         left_value += initial_ratio[i]
     })
 
@@ -173,8 +192,8 @@ function _slider() {
         split.parent(_div);
         split.class('slider_split');
         splits.push(split);
-        split.style("left", (400*left_pos)+"px");
-        splits_values.push(400*left_pos)
+        split.style("left", (450*left_pos)+"px");
+        splits_values.push(450*left_pos)
         left_pos+=initial_ratio[i+1];
         
         split.elt.addEventListener("mousedown",(e)=>dragStart(e, i),true);
@@ -202,8 +221,8 @@ function dragging(e) {
        }
            
     } else if(dragIndex === 1) {
-        if(e.pageX >= sliderDiv.elt.offsetLeft+400-20) {
-             splits_values[1] = 400-10;
+        if(e.pageX >= sliderDiv.elt.offsetLeft+450-20) {
+             splits_values[1] = 450-10;
         } else if (e.pageX  <= sliderDiv.elt.offsetLeft+splits_values[0])
              splits_values[1] = splits_values[0]
         else 
@@ -224,7 +243,7 @@ function updateBoard(){
     loop();
     lineChartDiv.loop();
     isLoop = false;
-    buttonPlay.innerHTML = "Play";
+    buttonPlay.innerHTML = "PLAY";
 }
 
 function updateSliderUI() {
@@ -236,12 +255,12 @@ function updateSliderUI() {
     parts.forEach((part, index)=>{
         if(index === 2) {
             part.style('left', _xleft+10+'px')
-            part.style('width',  400 - _xleft-10+'px');
-            initial_ratio[index] = (400 - _xleft-10)/400
+            part.style('width',  450 - _xleft-10+'px');
+            initial_ratio[index] = (450 - _xleft-10)/450
         } else {
             part.style('left', _xleft+'px')
             part.style('width', (splits_values[index]-_xleft)+'px');
-            initial_ratio[index] = (splits_values[index]-_xleft)/400
+            initial_ratio[index] = (splits_values[index]-_xleft)/450
             _xleft = splits_values[index];
         }
     })
@@ -307,11 +326,11 @@ function playPause() {
     const buttonPlay = select('.buttonPlay').elt;
 
     if (isLoop){
-        buttonPlay.innerHTML = "Pause";
+        buttonPlay.innerHTML = "PAUSE";
         loop();
         lineChartDiv.loop();
     }else{
-        buttonPlay.innerHTML = "Play";
+        buttonPlay.innerHTML = "PLAY";
         noLoop();
         lineChartDiv.noLoop();
     }
