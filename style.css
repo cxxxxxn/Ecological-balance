@@ -1,5 +1,5 @@
 html, body {
-    margin: auto;
+    /* margin: auto; */
     width: 600px;
     padding: 0;
 }
@@ -58,4 +58,39 @@ canvas {
     top: 0px;
     content: '\02143';
     transform: rotate(40deg);
+}
+
+.slider {
+    position: relative;
+    width: 400px;
+    height: 50px;
+    margin-left: 5px;
+}
+
+.slider> div {
+    position: absolute;
+    width: 400px;
+    height: 50px;
+}
+
+.slider_part {
+    height: 100%;
+    /* display: inline-block; */
+    background-repeat:no-repeat;
+    background-position: 50% 50%;
+}
+
+.slider_split {
+    position: absolute;
+    width: 10px !important;
+    background-image: url(./img/split.png);
+    background-color: white;
+    background-repeat:no-repeat;
+	background-position: 50% 50%;
+	cursor: col-resize;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
 }
