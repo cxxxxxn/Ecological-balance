@@ -1,4 +1,5 @@
-let frameIndex = 0
+let frameIndex = 0; // frame counter
+let y_axis_max = 400; // control y axis max value
 function LineChart(parent) {
     let _height = 300;
     let _width = 350;
@@ -43,7 +44,7 @@ function LineChart(parent) {
             sketch.text('NUMBER', 5, 30);
             sketch.pop();
 
-            // line label
+            // line legend
             sketch.push();
             sketch.stroke(colors[0]);
             sketch.strokeWeight(2)
@@ -64,6 +65,8 @@ function LineChart(parent) {
             sketch.text('Seaweed', 180, offset/2)
             sketch.pop();
             
+
+            // get data for linechart
             let num_fish=0, num_grass=0, num_all=0;
             for(let i=0; i<particles.length; i++) {
                 let row = particles[i]
@@ -77,12 +80,14 @@ function LineChart(parent) {
                     else if(cell.type === 'grass')  num_grass+=1;
                 }
             }
+            if(num_fish>=y_axis_max || num_grass>=y_axis_max)   y_axis_max = num_all
+            // update history
             particles_history.push({
                 'fish': num_fish,
                 'grass': num_grass
             })
             
-
+            // draw linechart!
             sketch.push();
             sketch.strokeWeight(2);
             sketch.stroke(colors[0]);
@@ -93,7 +98,7 @@ function LineChart(parent) {
                 
                 if(frameIndex>=num_interval) num_interval+=int(num_interval*0.2);
                 let _x = offset + (_width-offset)/num_interval*i;
-                let _y = sketch.map(particles_history[i].fish, 0, num_all, _height-offset, offset, true);
+                let _y = sketch.map(particles_history[i].fish, 0, y_axis_max, _height-offset, offset, true);
                 sketch.curveVertex(_x, _y);
                 // if(_x >= _width)    num_interval+=int(num_interval*0.2);
             }
@@ -110,7 +115,7 @@ function LineChart(parent) {
                 
                 if(frameIndex>=num_interval) num_interval+=int(num_interval*0.2);
                 let _x = offset + (_width-offset)/num_interval*i;
-                let _y = sketch.map(particles_history[i].grass, 0, num_all, _height-offset, offset, true);
+                let _y = sketch.map(particles_history[i].grass, 0, y_axis_max, _height-offset, offset, true);
                 sketch.curveVertex(_x, _y);
                 // if(_x >= _width)    num_interval+=int(num_interval*0.2);
                

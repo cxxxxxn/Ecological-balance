@@ -24,7 +24,7 @@ const fish_origin_mass = 10,
 
 let radioDraw;//control free fish or electric fish
 
-// initial ratio of fish:grass:empty
+// initial ratio of grass:fish:empty
 let initial_ratio = [0.4, 0.1, 0.5];
 let parts = [];
 let splits = [];
@@ -51,6 +51,7 @@ function preload() {
 }
 
 function setup() {
+    // header div start
     let head = createDiv();
     head.class('head');
     let title = createDiv('SEAWEED-FISH ECOSYSTEM');
@@ -62,16 +63,29 @@ function setup() {
     let author = createDiv('by Nan Chen(1931950) + Fuling Sun(1931960)');
     author.class('author');
     author.parent(head);
+    // header div end
 
+    // introduction div start
+    let intro = createDiv();
+    intro.class('chap intro');
+    createIntro(intro);
+    // introduction div end
+    
+    
+
+    // simulation panel start
     let container = createDiv();
     container.class('container');
     let canvas_container = createDiv();
     canvas_container.parent(container);
     let canv = createCanvas(canvasWidth, canvasHeight);
     canv.parent(canvas_container);
+    // simulation panel end
 
+    // initial fishes and seaweeds
     initParticles();
 
+    // set frameRate
     frameRate(speedFrame_value);
 
     // parameters panel 
@@ -79,7 +93,7 @@ function setup() {
     para_container.class('paraContainer');
     para_container.parent(container);
 
-    // linechart div
+    // linechart panel
     lineChartDiv = LineChart(para_container);
     
     // ratio text div start
@@ -110,10 +124,9 @@ function setup() {
     // ratio slider
     sliderDiv = _slider();
 
-    // frameRate
+    // frameRate slider start
     let speed_div = createDiv();
     speed_div.parent(para_container);
-    // growSpeed - grass
     speedFrame_text = createSpan('Animation Speed: ');
     speedFrame_valuetext = createSpan(speedFrame_value);
     speedFrame_text.parent(speed_div);
@@ -125,8 +138,9 @@ function setup() {
     speedFrame_slider.class('speed_slider')
     speedFrame_slider.parent(speed_div);
     speedFrame_slider.input(updateFrameRate);
+    // frameRate slider end
 
-
+    // buttons 
     let buttonPlay = createP('PLAY');
     buttonPlay.class('button buttonPlay');
     buttonPlay.mousePressed(playPause);
@@ -138,6 +152,7 @@ function setup() {
     buttonNewBoard.parent(para_container);
 
 
+    // ratio of mouse actions
     let canvasClick = createDiv('Let\'s click the canvas:');
     canvasClick.class('canvasClick');
     canvasClick.parent(para_container);
@@ -148,9 +163,16 @@ function setup() {
     radioDraw.value('1');
     radioDraw.parent(para_container);
 
+    // ending div start
+    let endding = createDiv();
+    endding.class('chap endding');
+    createEnding(endding); 
+    // ending div end
+
     noLoop();
 }
 
+// initial number and distribution of lifes with initial ratio
 function initParticles(){
     particles = new Array(rowNum);
     for(let i = 0; i < columnNum; i++){
@@ -181,6 +203,23 @@ function initParticles(){
     }
 }
 
+// clean up and reset pond board
+function updateBoard(){
+    //new
+    initParticles();
+    particles_history = [];
+    mass = 10;
+
+    const buttonPlay = select('.buttonPlay').elt;
+    loop();
+    lineChartDiv.loop();
+    isLoop = false;
+    buttonPlay.innerHTML = "PLAY";
+    frameIndex = 0
+}
+
+
+// creating double slider for ratio adjustment
 function _slider() {
     let config = {
         backgrounds:[
@@ -247,8 +286,8 @@ function dragging(e) {
        }
            
     } else if(dragIndex === 1) {
-        if(e.pageX >= sliderDiv.elt.offsetLeft+320-20) {
-             splits_values[1] = 320-10;
+        if(e.pageX >= sliderDiv.elt.offsetLeft+320) {
+             splits_values[1] = 320;
         } else if (e.pageX  <= sliderDiv.elt.offsetLeft+splits_values[0])
              splits_values[1] = splits_values[0]
         else 
@@ -260,20 +299,7 @@ function dragEnd(e) {
     dragIndex = -1;
 }
 
-function updateBoard(){
-    //new
-    initParticles();
-    particles_history = [];
-    mass = 10;
-
-    const buttonPlay = select('.buttonPlay').elt;
-    loop();
-    lineChartDiv.loop();
-    isLoop = false;
-    buttonPlay.innerHTML = "PLAY";
-    frameIndex = 0
-}
-
+// update the double slider UI
 function updateSliderUI() {
     let _xleft = 0;
 
@@ -298,7 +324,8 @@ function updateSliderUI() {
         else  span_empty.html(round(initial_ratio[2]*100)+'%');
     })
 }
-  
+
+// drawing ponds!
 function draw() {
     background(240, 255, 255);
     select('canvas').class(radioDraw.value() === '1' ?'freeFish':'electricFish')
@@ -338,16 +365,17 @@ function draw() {
     });
 }
 
+// mouse action - electric fish
 function electricFish(x,y){
     if(particles[x][y] && particles[x][y].type === "fish")
         particles[x][y].status = ELECTRIC;
 }
-
+// mouse action - put fish in
 function freeFish(x,y){
     if(!particles[x][y])
         particles[x][y] = new Fish(x, y);
 }
-
+// mouse action
 function mousePressed(e) {
     if (e.target.id === 'defaultCanvas0'){
         let x = parseInt(mouseX / particleWidth),
@@ -379,7 +407,7 @@ function mousePressed(e) {
         }
     }
 };
-
+// start/stop animation 
 function playPause() {
     isLoop = !isLoop;
     const buttonPlay = select('.buttonPlay').elt;
@@ -392,12 +420,6 @@ function playPause() {
         buttonPlay.innerHTML = "PLAY";
         noLoop();
         lineChartDiv.noLoop();
-    }
-}
-
-function keyPressed() {
-    if (key === ' ') {
-        playPause();
     }
 }
 
@@ -496,3 +518,55 @@ function updateFrameRate() {
     lineChartDiv.frameRate(speedFrame_value);
 }
 
+function createIntro(intro) {
+    let introText = createP("This is a simple ecosystem involving seaweeds and fishes. We assume that the system has <b>constant mass</b>(distributed in each organism) and <b>limited space</b>.");
+    introText.parent(intro);
+
+    
+    let diagram = createImg('./img/diagram.png', () => {
+        diagram.size(600, AUTO);
+    });
+    diagram.parent(intro);
+    diagram.class('diagram');
+    let seaweedTitle = createP('<b>Seaweed</b>');
+    seaweedTitle.parent(intro);
+    seaweedTitle.class('introType')
+    let seaweed = createP("▷ Each seaweed has an initial mass. When the mass in the environment is abundant, it will absort energy and then grow. If the energy in the environment is insufficient, the seaweed will release part of its own energy to the environment.<br>▷ When the accumulative energy in the seaweed has reached a certain stage s0, the seaweed will reproduce with some probability; when the accumulative energy has reached a certain stage s1, the seaweed will reproduce. A small amount of mass transfer from parents to children. The child is distributed nearby the parent. <br>▷ When the accumulative energy is too low to sustain life, the seaweed will die, and the energy goes back to the environment.")
+    seaweed.parent(intro);
+    seaweed.class('introList')
+    let fishTitle = createP('<b>FISH</b>');
+    fishTitle.parent(intro);
+    fishTitle.class('introType')
+    let fish = createP("▷ Each fish has a initial mass. Swimming consumes energy proportional to its mass.<br>▷ When the accumulative energy is too low to sustain life, the fish will die, and the energy goes back to the environment.<br>▷ When the accumulative energy has reached a certain stage s0, the fish will reproduce with some probability; when the accumulative energy has reached a certain stage s1, the fish will reproduce. A small amount of mass transfer from parents to children. The child is distributed nearby the parent.<br>▷ There's a 50% chance that fish will eat grass whose energy is less than half of its.  If no grass nearby, it will become hungry and swim to find grass.")
+    fish.parent(intro);
+    fish.class('introList');
+    createFuncList(intro); // list functions
+
+    let welcome = createP("Run the simulator and have fun!")
+    welcome.parent(intro);
+}
+
+function createFuncList(intro) {
+    let introPlay = createP('Here we provide several interactive functions in the simulation:');
+    introPlay.parent(intro);
+    let list = createP('❍ Click "PLAY"/"PAUSE" button to start/stop the simulation. <br>❍ Click "NEW BOARD" button to re-set the pond board.<br>❍ Use the double slider to adjust the ratio of fish, seaweed and empty space in the pond.<br>❍ Use the slider of "Animation Speed" to adjust the speed of the simulation.<br>❍ Click the pond to put new fish in🐟 or kill fish using electric⚡️, switched by clicking the radio button. ');
+    list.class('introList');
+    list.parent(intro);
+}
+
+function createEnding(endding) {
+    let conc1 = createP('How is it going? Can you succeed in keeping a balance between them?');
+    conc1.parent(endding);
+    let conc2 = createP('According to our own experiences, most of the simulation follow a similar pattern:');
+    conc2.parent(endding);
+    let conc3 = createP('▷ The number of seaweeds decreases because of the eating fishes. <br>▷ The number of fishes decreases because of insufficient food. <br>▷ Seaweeds grow when there are less fishes.<br>▷ Fishes grow as the seaweeds grow.');
+    conc3.parent(endding);
+    conc3.class('introList');
+    let conc4 = createP("It's a loop, until something bad happens. Have you tried to interfere with this system? Some slight changes will help the system to stay balanced, or has no effect on it. However, putting too many fishes into the ponds will cause seaweeds to decrease dramatically or even become extinct, then fishes are starved to death. Dang! ");
+    conc4.parent(endding);
+    let conc5 = createP("This simplified ecosystem is delicate, since it only has two kinds of species. The full-version ecosystem in the real world has all kinds of species and much more complex dependencies between each other, it is strong to last for so many years. However, it is made up of a large number of small and simple systems. If we don't behave properly, terrible things will happen and the ecosystem will break down someday. ");
+    conc5.parent(endding);
+    let conc6 = createP("Watch out!");
+    conc6.parent(endding);
+    
+}
