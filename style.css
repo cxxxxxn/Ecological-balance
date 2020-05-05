@@ -3,6 +3,7 @@ html, body {
     color:#667788;
     font-family: Tahoma, Verdana, Segoe;
     font-size: 14px;
+    margin: 0
 }
 
 .head{
@@ -169,4 +170,42 @@ span.speed_value {
 
 span {
     user-select: none;
+}
+
+.chap {
+    margin: 50px auto;
+    width: 800px;
+}
+
+.chap p {
+    color: black;
+    font-family: Lato,sans-serif;
+    font-size: 20px;
+    font-weight: 100;
+    line-height: 30px;
+}
+
+.intro img {
+    display:block;
+    margin:auto;
+}
+
+.funcList {
+    margin-left: 10px;
+    font-size: 18px !important;
+    line-height: 10px !important;
+}
+
+.introType {
+    font-size: 22px;
+}
+
+.introList {
+    margin-left: 10px;
+    font-size: 18px !important;
+}
+
+.sub {
+    vertical-align: sub;
+    font-size: 12px;
 }
