@@ -1,5 +1,5 @@
+let frameIndex = 0
 function LineChart(parent) {
-    let frameIndex = 0
     let _height = 300;
     let _width = 350;
     let offset = 30;
@@ -87,7 +87,7 @@ function LineChart(parent) {
             sketch.stroke(colors[0]);
             sketch.noFill();
             sketch.beginShape();
-            let num_interval = 500;
+            let num_interval = 100;
             for(let i=0; i<particles_history.length; i++) {
                 
                 if(frameIndex>=num_interval) num_interval+=int(num_interval*0.2);
@@ -104,7 +104,7 @@ function LineChart(parent) {
             sketch.stroke(colors[1]);
             sketch.noFill();
             sketch.beginShape();
-            num_interval = 500; 
+            num_interval = 100; 
             for(let i=0; i<particles_history.length; i++) {
                 
                 if(frameIndex>=num_interval) num_interval+=int(num_interval*0.2);

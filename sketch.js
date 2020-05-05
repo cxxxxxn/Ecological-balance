@@ -201,7 +201,7 @@ function _slider() {
         part.class('slider_part');
         part.style('width', initial_ratio[i]*320 +'px');
         part.style('background-color', config.backgrounds[i].color)
-        part.style("background-image", "url("+config.backgrounds[i].icon+")")
+        if(i!==2) part.style("background-image", "url("+config.backgrounds[i].icon+")")
         part.style("left", (320*left_value)+"px");
         left_value += initial_ratio[i]
     })
@@ -212,7 +212,7 @@ function _slider() {
         split.parent(_div);
         split.class('slider_split');
         splits.push(split);
-        split.style("left", (320*left_pos)+"px");
+        split.style("left", (320*left_pos-5)+"px");
         splits_values.push(320*left_pos)
         left_pos+=initial_ratio[i+1];
         
@@ -264,19 +264,20 @@ function updateBoard(){
     lineChartDiv.loop();
     isLoop = false;
     buttonPlay.innerHTML = "PLAY";
+    frameIndex = 0
 }
 
 function updateSliderUI() {
     let _xleft = 0;
 
     splits.forEach((split, index)=>{
-        split.style('left', splits_values[index]+'px');
+        split.style('left', splits_values[index]-5+'px');
     })
     parts.forEach((part, index)=>{
         if(index === 2) {
-            part.style('left', _xleft+10+'px')
-            part.style('width',  320 - _xleft-10+'px');
-            initial_ratio[index] = (320 - _xleft-10)/320
+            part.style('left', _xleft+'px')
+            part.style('width',  320 - _xleft+'px');
+            initial_ratio[index] = (320 - _xleft)/320
         } else {
             part.style('left', _xleft+'px')
             part.style('width', (splits_values[index]-_xleft)+'px');
