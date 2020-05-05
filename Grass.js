@@ -9,7 +9,7 @@ class Grass {
         this.age = 0;
 
         this.growSpeed = parseInt(random(3, 5));
-        this.maxAge = parseInt(random(20, 30));
+        this.maxAge = parseInt(random(8, 25));
     }
 
     grow() {

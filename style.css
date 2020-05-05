@@ -169,3 +169,7 @@ span.speed_value {
 .highlight{
     color: #cc2727;
 }
+
+span {
+    user-select: none;
+}
