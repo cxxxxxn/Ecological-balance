@@ -1,10 +1,8 @@
 html, body {
-    /* margin: auto; */
     padding: 0;
-    font-size: 14px;
     color:#667788;
-    /* font-family: sans-serif; */
     font-family: Tahoma, Verdana, Segoe;
+    font-size: 14px;
 }
 
 .head{
@@ -56,7 +54,7 @@ canvas {
     background: #667788;
     color: white;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
     height: 40px;
     line-height: 40px;
     width: 150px;
@@ -66,7 +64,7 @@ canvas {
     color:#667788;
     display: flex;
     align-items: center;
-    margin-left: 135px; 
+    margin-left: 130px; 
 }
 
 .canvasClick{
@@ -115,7 +113,6 @@ canvas {
 
 .slider_part {
     height: 100%;
-    /* display: inline-block; */
     background-repeat:no-repeat;
     background-position: 50% 50%;
 }

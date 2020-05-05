@@ -19,8 +19,8 @@ let particles = [];
 let particles_history = [];
 let mass = 10;
 let massTotal;
-let fish_origin_mass = 10;
-let grass_origin_mass = 4;
+const fish_origin_mass = 10,
+    grass_origin_mass = 4;
 
 let radioDraw;//control free fish or electric fish
 
@@ -38,7 +38,7 @@ let span_grass, span_fish, span_empty;
 // slider of grow
 let speedFrame_slider, speedFrame_valuetext, speedFrame_value=5
 
-let imgGrass = {},
+const imgGrass = {},
     imgFish = {};
 function preload() {
     imgGrass[DEAD] = loadImage('./img/grassDead.png');
