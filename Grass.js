@@ -1,37 +1,46 @@
+
 class Grass {
-    constructor(x, y) {
+    constructor(x, y, mass) {
         this.type = "grass";
 
         this.x = x;
         this.y = y;
 
         this.status = HEALTHY;
-        this.age = 0;
+        this.mass = mass || grass_origin_mass;
 
-        this.growSpeed = parseInt(random(3, 5));
-        this.maxAge = parseInt(random(8, 25));
+        this.reproduction_threshold = 4;
+        this.reproduction_threshold_max = 9;
+        this.reproduction_chance = 0.3;
+        this.mass_min = 2;
     }
 
     grow() {
-        this.age++;
-        if(this.status === DEAD){//disappear
+        if(this.status === DEAD || this.mass === 0){//disappear
             particles[this.x][this.y] = undefined;
-        }else if(this.age > this.maxAge){
+            mass += this.mass;
+        }else if(this.mass < this.mass_min){
             this.status = DEAD;
-        }else if((this.age % this.growSpeed) === 0){
+        }else if(this.mass > this.reproduction_threshold_max || (this.mass > this.reproduction_threshold && random() > this.reproduction_chance)){
             this.multiply();
+        }else if(mass > 0){
+            mass -= 2;
+            this.mass += 2;
+        }else if(random() > 0.5){
+            mass += 2;
+            this.mass -= 2;
         }
     }
 
     multiply(){
         let newPos = getNullSpace(this.x, this.y);
-        if(newPos)
+        if(newPos){
+            this.mass -= grass_origin_mass;
             particles[newPos.x][newPos.y] = new Grass(newPos.x, newPos.y);
+        }
     }
   
     plot() {
-        if(this.age > 0){
-            image(imgGrass[this.status], this.x * particleWidth + padding, this.y * particleHeight + padding, particleWidth - 2 * padding, particleHeight - 2 * padding);
-        }
+        image(imgGrass[this.status], this.x * particleWidth + padding, this.y * particleHeight + padding, particleWidth - 2 * padding, particleHeight - 2 * padding);
     }
   }

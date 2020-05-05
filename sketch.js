@@ -17,11 +17,15 @@ let isLoop = false;
 // Environment
 let particles = [];
 let particles_history = [];
+let mass = 10;
+let massTotal;
+let fish_origin_mass = 10;
+let grass_origin_mass = 4;
 
 let radioDraw;//control free fish or electric fish
 
 // initial ratio of fish:grass:empty
-let initial_ratio = [0.1, 0.1, 0.8];
+let initial_ratio = [0.4, 0.1, 0.5];
 let parts = [];
 let splits = [];
 let splits_values = [];
@@ -32,7 +36,7 @@ let para_container;
 let span_grass, span_fish, span_empty;
 
 // slider of grow
-let speedFrame_slider, speedFrame_valuetext, speedFrame_value=2
+let speedFrame_slider, speedFrame_valuetext, speedFrame_value=5
 
 let imgGrass = {},
     imgFish = {};
@@ -68,7 +72,7 @@ function setup() {
 
     initParticles();
 
-    frameRate(2);
+    frameRate(speedFrame_value);
 
     // parameters panel 
     para_container = createDiv();
@@ -117,7 +121,7 @@ function setup() {
     speedFrame_text.class('speed_value');
     speedFrame_valuetext.class('highlight');
 
-    speedFrame_slider = createSlider(2, 20, 2, 1);
+    speedFrame_slider = createSlider(2, 20, speedFrame_value, 1);
     speedFrame_slider.class('speed_slider')
     speedFrame_slider.parent(speed_div);
     speedFrame_slider.input(updateFrameRate);
@@ -155,6 +159,8 @@ function initParticles(){
 
     let fishNum = parseInt(initial_ratio[1] * allNum),
         grassNum = parseInt(initial_ratio[0] * allNum);
+
+    massTotal = mass + fishNum*fish_origin_mass + grassNum*grass_origin_mass;
     for (let i = 0; i < fishNum; i++){//init fish
         let x = parseInt(random(rowNum)),
             y = parseInt(random(columnNum));
@@ -258,6 +264,7 @@ function updateBoard(){
     //new
     initParticles();
     particles_history = [];
+    mass = 10;
 
     const buttonPlay = select('.buttonPlay').elt;
     loop();
@@ -293,29 +300,52 @@ function updateSliderUI() {
 }
   
 function draw() {
-    
     background(240, 255, 255);
     select('canvas').class(radioDraw.value() === '1' ?'freeFish':'electricFish')
+    
     if(!isLoop){
         noLoop();
     }
     let currentParticles = [];
+    massTotal = mass;
     particles.forEach(row => {
         row.forEach(particle => {
             if(particle){
                 currentParticles.push(particle);
+                particle.plot();
+                massTotal += particle.mass;
             }
         });
     });
-    currentParticles.forEach(particle => {
-        particle.grow();
-        particle.plot();
+
+    push();
+    strokeWeight(0);
+    fill('rgba(50%,50%,50%,0.4)');
+    rect(0,0,140,40);
+    strokeWeight(2);
+    fill("#fff");
+    textAlign(LEFT, CENTER);
+    textSize(14);
+    text("System mass: "+ massTotal,10,20);
+    pop();
+
+    particles.forEach(row => {
+        row.forEach(particle => {
+            if(particle){
+                particle.grow();
+            }
+        });
     });
 }
 
 function electricFish(x,y){
     if(particles[x][y] && particles[x][y].type === "fish")
         particles[x][y].status = ELECTRIC;
+}
+
+function freeFish(x,y){
+    if(!particles[x][y])
+        particles[x][y] = new Fish(x, y);
 }
 
 function mousePressed(e) {
@@ -325,7 +355,14 @@ function mousePressed(e) {
 
         switch (radioDraw.value()) {
             case '1': // Free fish
-                particles[x][y] = new Fish(x, y);
+                for(let i = 0; i < 2; i++){
+                    for (let j = 0; j < 2; j++){
+                        if(x-i >= 0 && y-j >= 0) freeFish(x-i, y-j);
+                        if(x-i >= 0 && y+j <= columnNum - 1) freeFish(x-i, y+j);
+                        if(x+i <= rowNum - 1 && y-j >= 0) freeFish(x+i, y-j);
+                        if(x+i <= rowNum - 1 && y+j <= columnNum - 1) freeFish(x+i, y+j);
+                    }
+                }
                 break;
             case '2': // Electric fish
                 for(let i = 0; i < 4; i++){
@@ -413,9 +450,10 @@ function getNullSpace(x,y){
     }
 
     let count = 0;
-    while(count < 20){
+    while(count < 30){
         count ++;
         let dis = parseInt(count/6);
+        if(dis > 3) dis = 3;
         let x1 = parseInt(random(dis*2+1)) - dis + x,
             y1 = parseInt(random(dis*2+1)) - dis + y;
         if(isNull(x1, y1)){
@@ -428,17 +466,17 @@ function getNullSpace(x,y){
     return;
 }
 
-function findGrass(x,y){
+function findGrass(x,y,fish_mass){
     function isGrass(x1, y1){
         if(x1 >= 0 && y1 >= 0 && x1 < rowNum && y1 < columnNum)
-            return (particles[x1][y1] && particles[x1][y1].type === "grass" && particles[x1][y1].status === HEALTHY);
+            return (particles[x1][y1] && particles[x1][y1].type === "grass" && particles[x1][y1].status === HEALTHY && fish_mass > particles[x1][y1].mass * 2);
         return false;
     }
 
     let count = 0;
-    while(count < 18){
+    while(count < 30){
         count ++;
-        let dis = parseInt(count/4);
+        let dis = parseInt(count/6);
         let x1 = parseInt(random(dis*2+1)) - dis + x,
             y1 = parseInt(random(dis*2+1)) - dis + y;
         if(isGrass(x1, y1)){

@@ -20,6 +20,17 @@ function LineChart(parent) {
                 sketch.noLoop();
             }
             sketch.background(240, 255, 255);
+
+            // sketch.push();
+            // sketch.strokeWeight(0);
+            // sketch.fill('rgba(50%,50%,50%,0.4)');
+            // sketch.rect(offset,offset,140,40);
+            // sketch.strokeWeight(2);
+            // sketch.fill("#fff");
+            // sketch.textAlign(LEFT, CENTER);
+            // sketch.textSize(14);
+            // sketch.text("System mass: "+ massTotal,offset+8,offset+20);
+            // sketch.pop();
             // x y axis
             sketch.push()
             sketch.stroke(205);
