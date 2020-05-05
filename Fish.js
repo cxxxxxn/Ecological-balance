@@ -1,30 +1,33 @@
 class Fish {
-    constructor(x, y) {
+    constructor(x, y, mass) {
         this.type = "fish";
 
         this.x = x;
         this.y = y;
 
         this.status = HEALTHY;
-        this.age = 0;
+        this.mass = mass || fish_origin_mass;
 
-        this.eatSpeed = parseInt(random(3, 5));
-        this.growSpeed = parseInt(random(8, 15));
-        this.maxAge = parseInt(random(20, 40));
+        this.reproduction_threshold = 40;
+        this.reproduction_threshold_max = 120;
+        this.reproduction_chance = 0.1;
+        this.mass_min = 8;
     }
 
     grow() {
-        this.age++;
-        if(this.status === DEAD || this.status === ELECTRIC){//disappear
+        if(this.status === DEAD){
             particles[this.x][this.y] = undefined;
-        }else if(this.age > this.maxAge){
+            mass += this.mass;
+        }else if(this.status === ELECTRIC){//disappear
+            particles[this.x][this.y] = undefined;
+        }else if(this.mass < this.mass_min){
             this.status = DEAD;
-        }else if(this.age > 0){
-            if((this.age % this.eatSpeed) === 0 || this.status === HUNGRY){
-                this.eatGrass();
-            }else if((this.age < this.maxAge / 2) &&(this.age % this.growSpeed) === 0 && this.status === HEALTHY){
+        }else{
+            if((this.mass > this.reproduction_threshold_max || (this.mass > this.reproduction_threshold && random() > this.reproduction_chance)) && this.status === HEALTHY){
                 this.multiply();
-            }else if(this.age > 1){
+            }else if((random() > 0.5)|| this.status === HUNGRY){
+                this.eatGrass();
+            }else if((random() > 0.6)){
                 this.swim();
             }
         }
@@ -33,6 +36,9 @@ class Fish {
     swim(){
         let newPos = getNullNeighborSpace(this.x, this.y);
         if(newPos){
+            let lost = parseInt(this.mass / 3);
+            this.mass -= lost;
+            mass += lost;
             particles[this.x][this.y] = undefined;
             particles[newPos.x][newPos.y] = this;
             this.x = newPos.x;
@@ -41,33 +47,34 @@ class Fish {
     }
 
     eatGrass(){
-        let grass = findGrass(this.x, this.y);
+        let grass = findGrass(this.x, this.y, this.mass);
         if(grass){
-            particles[this.x][this.y] = undefined;
+            this.mass += particles[grass.x][grass.y].mass;
+            particles[grass.x][grass.y].mass = 0;
+
             particles[grass.x][grass.y] = this;
+            particles[this.x][this.y] = undefined;
             this.x = grass.x;
             this.y = grass.y;
             this.status = HEALTHY;
         }else{
-            if(this.status === HUNGRY && (this.age % this.eatSpeed) === 0){
-                this.status = DEAD;
-            }else if(this.status === HEALTHY){
+            if(this.mass < this.mass_min + 3){
                 this.status = HUNGRY;
-            }else{
-                this.swim();
             }
+            if(this.mass > 2 *this.mass_min || random() > 0.5)
+                this.swim();
         }
     }
 
     multiply(){
         let newPos = getNullSpace(this.x, this.y);
-        if(newPos)
+        if(newPos){
+            this.mass -= fish_origin_mass;
             particles[newPos.x][newPos.y] = new Fish(newPos.x, newPos.y);
+        }
     }
   
     plot() {
-        if(this.age > 0){
-            image(imgFish[this.status], this.x * particleWidth + padding, this.y * particleHeight + padding, particleWidth - 2 * padding, particleHeight - 2 * padding);
-        }
+        image(imgFish[this.status], this.x * particleWidth + padding, this.y * particleHeight + padding, particleWidth - 2 * padding, particleHeight - 2 * padding);  
     }
   }
