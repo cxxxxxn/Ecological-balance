@@ -60,7 +60,7 @@ function setup() {
     let title1 = createDiv('ECOLOGICAL BALANCE SIMULATOR');
     title1.class('title1');
     title1.parent(head);
-    let author = createDiv('by Nan Chen(1931950) + Fuling Sun(1931960)');
+    let author = createDiv('by Nan Chen + Fuling Sun');
     author.class('author');
     author.parent(head);
     // header div end
